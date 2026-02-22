@@ -29,3 +29,19 @@ jobs:
 
       - run: pip install pre-commit
       - run: pre-commit run --all-files
+
+  tofu-validate:
+    name: OpenTofu Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_wrapper: false
+
+      - name: Initialize
+        run: tofu init -backend=false
+
+      - name: Validate
+        run: tofu validate
