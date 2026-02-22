@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+name       = "{{ nomad_name }}"
+region     = "{{ nomad_region }}"
+datacenter = "{{ nomad_datacenter }}"
+data_dir   = "{{ nomad_data_dir }}"
+bind_addr  = "{{ nomad_bind_addr }}"
+log_level  = "{{ nomad_log_level }}"
+
+advertise {
+  http = "{{ nomad_advertise_addr }}"
+  rpc  = "{{ nomad_advertise_addr }}"
+  serf = "{{ nomad_advertise_addr }}"
+}
+
+acl {
+  enabled = true
+}

@@ -1,0 +1,16 @@
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: nomad
+  roles:
+    - nomad
+
+- hosts: nomad_server
+  roles:
+    - nomad_server
+
+- hosts: nomad_client
+  roles:
+    - nomad_client

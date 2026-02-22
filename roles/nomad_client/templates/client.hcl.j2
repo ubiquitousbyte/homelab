@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+client {
+  enabled = true
+  servers = [{% for host in groups['nomad_server'] %}"{{ hostvars[host]['nomad_advertise_addr'] }}:4647"{% if not loop.last %}, {% endif %}{% endfor %}]
+}
+
+plugin "docker" {
+  config {
+    auth {
+      config = "/root/.docker/config.json"
+    }
+  }
+}

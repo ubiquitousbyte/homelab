@@ -1,0 +1,4 @@
+---
+- import_tasks: ghostty.yml
+- import_tasks: python.yml
+- import_tasks: docker.yml

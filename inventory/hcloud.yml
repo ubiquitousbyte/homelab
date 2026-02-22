@@ -1,0 +1,15 @@
+---
+plugin: hetzner.hcloud.hcloud
+locations:
+  - nbg1
+network: main
+
+groups:
+  nomad: "'nomad' in hcloud_labels.get('role', '')"
+  nomad_server: "'server' in hcloud_labels.get('nomad_role', '')"
+  nomad_client: "'client' in hcloud_labels.get('nomad_role', '')"
+
+compose:
+  nomad_advertise_addr: hcloud_private_ipv4
+  nomad_datacenter: hcloud_location
+  nomad_region: hcloud_location

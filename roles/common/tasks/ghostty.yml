@@ -1,0 +1,12 @@
+---
+- name: Export Ghossty's terminfo
+  shell: infocmp -x xterm-ghostty
+  delegate_to: localhost
+  register: ghostty_terminfo
+  failed_when: false
+
+- name: Copy Ghostty's terminfo entry to the remote machine
+  shell: tic -x -
+  args:
+    stdin: "{{ ghostty_terminfo.stdout }}"
+  when: ghostty_terminfo.rc == 0

@@ -1,0 +1,6 @@
+---
+nomad_name: "{{ inventory_hostname }}"
+nomad_config_dir: /etc/nomad.d
+nomad_data_dir: /opt/nomad/data
+nomad_bind_addr: "0.0.0.0"
+nomad_log_level: INFO

@@ -1,0 +1,10 @@
+---
+- name: Show Python Library Paths
+  community.general.python_requirements_info:
+
+- name: Install Pip
+  apt:
+    name:
+      - python3-pip
+    state: present
+    update_cache: true

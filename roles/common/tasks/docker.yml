@@ -1,0 +1,56 @@
+---
+- name: Check for modern Pydocker versions
+  community.general.python_requirements_info:
+    dependencies:
+      - docker
+  register: pydocker_dep
+
+- name: Install Pydocker
+  pip:
+    name: docker
+    break_system_packages: true
+    state: present
+  when: "'docker' in pydocker_dep.not_found"
+
+- name: Install required apt packages for adding Docker
+  apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker apt Repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
+    state: present
+
+- name: Install Docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+- name: Start and enable Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Login to ghcr.io
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: "{{ github_username }}"
+    password: "{{ github_token }}"
+  vars:
+    github_token: "{{ lookup('env', 'TF_VAR_github_cr_pat') }}"
+    github_username: "{{ lookup('env', 'TF_VAR_github_cr_username') }}"

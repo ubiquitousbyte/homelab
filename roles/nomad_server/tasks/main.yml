@@ -1,0 +1,15 @@
+---
+- name: Configure Nomad server
+  template:
+    src: server.hcl.j2
+    dest: "{{ nomad_config_dir }}/server.hcl"
+    owner: nomad
+    group: nomad
+    mode: "0640"
+  notify: Restart nomad
+
+- name: Enable and start Nomad
+  systemd:
+    name: nomad
+    state: started
+    enabled: true

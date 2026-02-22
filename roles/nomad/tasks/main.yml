@@ -1,0 +1,49 @@
+---
+- name: Install required apt packages for adding HashiCorp repo
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+
+- name: Add HashiCorp GPG key
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Add HashiCorp apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_facts['distribution_release'] }} main"
+    state: present
+
+- name: Install Nomad
+  apt:
+    name: nomad
+    state: present
+    update_cache: true
+
+- name: Create Nomad config directory
+  file:
+    path: "{{ nomad_config_dir }}"
+    state: directory
+    owner: nomad
+    group: nomad
+    mode: "0750"
+
+- name: Create Nomad data directory
+  file:
+    path: "{{ nomad_data_dir }}"
+    state: directory
+    owner: nomad
+    group: nomad
+    mode: "0755"
+
+- name: Configure Nomad base config
+  template:
+    src: nomad.hcl.j2
+    dest: "{{ nomad_config_dir }}/nomad.hcl"
+    owner: nomad
+    group: nomad
+    mode: "0640"
+  notify: Restart nomad
