@@ -18,3 +18,4 @@
   hosts: nomad_client
   roles:
     - nomad_client
+    - nomad_1password
