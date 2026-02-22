@@ -1,4 +1,7 @@
 ---
-- import_tasks: ghostty.yml
-- import_tasks: python.yml
-- import_tasks: docker.yml
+- name: Set up Ghostty terminal support
+  ansible.builtin.import_tasks: ghostty.yml
+- name: Set up Python and pip
+  ansible.builtin.import_tasks: python.yml
+- name: Set up Docker and container registry access
+  ansible.builtin.import_tasks: docker.yml

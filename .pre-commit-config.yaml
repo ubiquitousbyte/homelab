@@ -1,0 +1,40 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: \.j2$
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-symlinks
+
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v25.4.0
+    hooks:
+      - id: ansible-lint
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.382
+    hooks:
+      - id: checkov
+        args: [--directory, ., --framework, terraform]
+        files: \.tf$
+
+  - repo: local
+    hooks:
+      - id: tofu-fmt
+        name: tofu fmt
+        language: system
+        entry: tofu fmt -check -diff -recursive
+        files: \.tf$
+        pass_filenames: false

@@ -1,0 +1,7 @@
+---
+profile: shared
+
+exclude_paths:
+  - .terraform/
+  - .venv/
+  - .github/

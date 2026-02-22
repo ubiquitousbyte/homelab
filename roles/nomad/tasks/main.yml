@@ -1,6 +1,6 @@
 ---
 - name: Install required apt packages for adding HashiCorp repo
-  apt:
+  ansible.builtin.apt:
     name:
       - ca-certificates
       - curl
@@ -8,23 +8,23 @@
     state: present
 
 - name: Add HashiCorp GPG key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://apt.releases.hashicorp.com/gpg
     state: present
 
 - name: Add HashiCorp apt repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_facts['distribution_release'] }} main"
     state: present
 
 - name: Install Nomad
-  apt:
+  ansible.builtin.apt:
     name: nomad
     state: present
     update_cache: true
 
 - name: Create Nomad config directory
-  file:
+  ansible.builtin.file:
     path: "{{ nomad_config_dir }}"
     state: directory
     owner: nomad
@@ -32,7 +32,7 @@
     mode: "0750"
 
 - name: Create Nomad data directory
-  file:
+  ansible.builtin.file:
     path: "{{ nomad_data_dir }}"
     state: directory
     owner: nomad
@@ -40,7 +40,7 @@
     mode: "0755"
 
 - name: Configure Nomad base config
-  template:
+  ansible.builtin.template:
     src: nomad.hcl.j2
     dest: "{{ nomad_config_dir }}/nomad.hcl"
     owner: nomad

@@ -48,7 +48,7 @@ resource "hcloud_ssh_key" "main" {
 
 resource "hcloud_network" "main" {
   name = "main"
-  # This gives us (2^16)-2 available addresses, 
+  # This gives us (2^16)-2 available addresses,
   # excluding the network address (10.0.0.0) and the broadcast address (10.0.255.255).
   ip_range = "10.0.0.0/16"
 }

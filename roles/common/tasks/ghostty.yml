@@ -1,12 +1,14 @@
 ---
-- name: Export Ghossty's terminfo
-  shell: infocmp -x xterm-ghostty
+- name: Export Ghostty's terminfo
+  ansible.builtin.command: infocmp -x xterm-ghostty
   delegate_to: localhost
   register: ghostty_terminfo
+  changed_when: false
   failed_when: false
 
 - name: Copy Ghostty's terminfo entry to the remote machine
-  shell: tic -x -
+  ansible.builtin.command: tic -x -
   args:
     stdin: "{{ ghostty_terminfo.stdout }}"
+  changed_when: true
   when: ghostty_terminfo.rc == 0

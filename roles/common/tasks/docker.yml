@@ -6,31 +6,31 @@
   register: pydocker_dep
 
 - name: Install Pydocker
-  pip:
+  ansible.builtin.pip:
     name: docker
     break_system_packages: true
     state: present
   when: "'docker' in pydocker_dep.not_found"
 
 - name: Install required apt packages for adding Docker
-  apt:
+  ansible.builtin.apt:
     name:
       - ca-certificates
       - curl
     state: present
 
 - name: Add Docker GPG key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add Docker apt Repository
-  apt_repository:
+- name: Add Docker apt repository
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
     state: present
 
 - name: Install Docker
-  apt:
+  ansible.builtin.apt:
     name:
       - docker-ce
       - docker-ce-cli
@@ -41,7 +41,7 @@
     update_cache: true
 
 - name: Start and enable Docker
-  systemd:
+  ansible.builtin.systemd_service:
     name: docker
     state: started
     enabled: true

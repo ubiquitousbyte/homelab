@@ -1,6 +1,6 @@
 ---
 - name: Configure Nomad server
-  template:
+  ansible.builtin.template:
     src: server.hcl.j2
     dest: "{{ nomad_config_dir }}/server.hcl"
     owner: nomad
@@ -9,7 +9,7 @@
   notify: Restart nomad
 
 - name: Enable and start Nomad
-  systemd:
+  ansible.builtin.systemd_service:
     name: nomad
     state: started
     enabled: true

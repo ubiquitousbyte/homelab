@@ -1,16 +1,20 @@
 ---
-- hosts: all
+- name: Apply common configuration to all hosts
+  hosts: all
   roles:
     - common
 
-- hosts: nomad
+- name: Install and configure Nomad on all Nomad nodes
+  hosts: nomad
   roles:
     - nomad
 
-- hosts: nomad_server
+- name: Configure Nomad server nodes
+  hosts: nomad_server
   roles:
     - nomad_server
 
-- hosts: nomad_client
+- name: Configure Nomad client nodes
+  hosts: nomad_client
   roles:
     - nomad_client

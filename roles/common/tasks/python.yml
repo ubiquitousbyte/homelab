@@ -1,9 +1,9 @@
 ---
-- name: Show Python Library Paths
+- name: Show Python library paths
   community.general.python_requirements_info:
 
-- name: Install Pip
-  apt:
+- name: Install pip
+  ansible.builtin.apt:
     name:
       - python3-pip
     state: present
