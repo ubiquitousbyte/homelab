@@ -38,3 +38,10 @@ repos:
         entry: tofu fmt -check -diff -recursive
         files: \.tf$
         pass_filenames: false
+
+      - id: tofu-validate
+        name: tofu validate
+        language: system
+        entry: bash -c 'tofu init -backend=false > /dev/null && tofu validate'
+        files: \.tf$
+        pass_filenames: false
