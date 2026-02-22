@@ -1,0 +1,13 @@
+# Hetzner Cloud API token (used by both OpenTofu and Ansible dynamic inventory)
+export HCLOUD_TOKEN="your-hcloud-api-token"
+
+# OpenTofu variables
+export TF_VAR_hcloud_token=$HCLOUD_TOKEN
+export TF_VAR_hcloud_public_key=$(cat $HOME/.ssh/id_ed25519.pub)
+
+# GitHub Container Registry credentials (used by Ansible to configure Docker login on nodes)
+export TF_VAR_github_cr_pat="your-github-personal-access-token"
+export TF_VAR_github_cr_username="your-github-username"
+
+# Load .env file if it exists (for non-secret config like home IP)
+dotenv_if_exists .env
