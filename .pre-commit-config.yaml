@@ -42,6 +42,6 @@ repos:
       - id: tofu-validate
         name: tofu validate
         language: system
-        entry: bash -c 'tofu init -backend=false > /dev/null && tofu validate'
+        entry: bash -c 'TF_DATA_DIR=$(mktemp -d) tofu init -backend=false > /dev/null && tofu validate'
         files: \.tf$
         pass_filenames: false
