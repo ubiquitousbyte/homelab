@@ -149,7 +149,6 @@ resource "hcloud_server_network" "cx3304_cloud01" {
   alias_ips = []
 }
 
-
 locals {
   ports = [
     "22",   # SSH
