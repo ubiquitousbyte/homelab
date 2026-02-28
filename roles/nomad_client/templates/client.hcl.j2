@@ -3,6 +3,7 @@
 client {
   enabled = true
   servers = [{% for host in groups['nomad_server'] %}"{{ hostvars[host]['nomad_advertise_addr'] }}:4647"{% if not loop.last %}, {% endif %}{% endfor %}]
+  node_class = "{{ hcloud_server_type }}"
 }
 
 plugin "docker" {

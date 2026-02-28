@@ -38,3 +38,11 @@
     owner: nomad
     group: nomad
     mode: "0755"
+
+- name: Configure Nomad base config
+  ansible.builtin.template:
+    src: nomad.hcl.j2
+    dest: "{{ nomad_config_dir }}/nomad.hcl"
+    owner: nomad
+    group: nomad
+    mode: "0640"

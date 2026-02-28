@@ -13,3 +13,4 @@ compose:
   nomad_advertise_addr: hcloud_private_ipv4
   nomad_datacenter: hcloud_location
   nomad_region: hcloud_location
+  nomad_hcloud_server_type: hcloud_server_type

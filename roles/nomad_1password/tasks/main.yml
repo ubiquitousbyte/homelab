@@ -16,8 +16,7 @@
 - name: Read expected checksum
   ansible.builtin.shell:
     cmd: set -o pipefail && grep 'linux_amd64.tar.gz' /tmp/nomad-1password-checksums.txt | cut -d ' ' -f1
-    args:
-      executable: /bin/bash
+    executable: /bin/bash
   register: nomad_1password_checksum
   changed_when: false
 
