@@ -1,4 +1,22 @@
 ---
+- name: Gather host volumes
+  hetzner.hcloud.volume_info:
+    label_selector: "nomad_role=host_volume"
+  register: host_volumes
+  delegate_to: localhost
+
+- name: Debug raw volume info
+  ansible.builtin.debug:
+    var: host_volumes
+
+- name: Set host volumes for this client
+  set_fact:
+    nomad_host_volumes: '{{ host_volumes.hcloud_volume_info | json_query("[?server==`" + inventory_hostname + "`]") }}'
+
+- name: Debug host volumes
+  ansible.builtin.debug:
+    var: nomad_host_volumes
+
 - name: Configure Nomad client
   ansible.builtin.template:
     src: client.hcl.j2

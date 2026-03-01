@@ -5,9 +5,11 @@ locations:
 network: main
 
 groups:
-  nomad: "'nomad' in hcloud_labels.get('role', '')"
+  nomad: "'server' in hcloud_labels.get('nomad_role', '') or 'client' in hcloud_labels.get('nomad_role', '')"
   nomad_server: "'server' in hcloud_labels.get('nomad_role', '')"
   nomad_client: "'client' in hcloud_labels.get('nomad_role', '')"
+  postgres_primary: "'primary' in hcloud_labels.get('postgres_role', '')"
+  redis_master: "'master' in hcloud_labels.get('redis_role', '')"
 
 compose:
   nomad_advertise_addr: hcloud_private_ipv4

@@ -4,6 +4,15 @@ client {
   enabled = true
   servers = [{% for host in groups['nomad_server'] %}"{{ hostvars[host]['nomad_advertise_addr'] }}:4647"{% if not loop.last %}, {% endif %}{% endfor %}]
   node_class = "{{ hcloud_server_type }}"
+
+{% if nomad_host_volumes | length > 0 %}
+{% for volume in nomad_host_volumes %}
+  host_volume "{{ volume.name }}" {
+    path = "/mnt/HC_Volume_{{ volume.id }}"
+    read_only = false
+  }
+{% endfor %}
+{% endif %}
 }
 
 plugin "docker" {

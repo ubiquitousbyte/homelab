@@ -71,7 +71,6 @@ resource "hcloud_server" "cx3301" {
   ]
 
   labels = {
-    "role" : "nomad"
     "nomad_role" : "server"
   }
 }
@@ -93,7 +92,6 @@ resource "hcloud_server" "cx3302" {
   ]
 
   labels = {
-    "role" : "nomad"
     "nomad_role" : "client"
   }
 }
@@ -115,8 +113,8 @@ resource "hcloud_server" "cx3303" {
   ]
 
   labels = {
-    "role" : "nomad"
     "nomad_role" : "client"
+    "redis_role" : "master"
   }
 }
 
@@ -125,6 +123,24 @@ resource "hcloud_server_network" "cx3303_cloud01" {
   subnet_id = hcloud_network_subnet.cloud01.id
   ip        = "10.0.1.3"
   alias_ips = []
+}
+
+resource "hcloud_volume" "cx3303_redis" {
+  name              = "redis"
+  size              = 50
+  format            = "ext4"
+  delete_protection = true
+  location          = "nbg1"
+
+  labels = {
+    "nomad_role" : "host_volume"
+  }
+}
+
+resource "hcloud_volume_attachment" "cx3303_redis" {
+  volume_id = hcloud_volume.cx3303_redis.id
+  server_id = hcloud_server.cx3303.id
+  automount = true
 }
 
 resource "hcloud_server" "cx3304" {
@@ -137,8 +153,8 @@ resource "hcloud_server" "cx3304" {
   ]
 
   labels = {
-    "role" : "nomad"
     "nomad_role" : "client"
+    "postgres_role" : "primary"
   }
 }
 
@@ -147,6 +163,24 @@ resource "hcloud_server_network" "cx3304_cloud01" {
   subnet_id = hcloud_network_subnet.cloud01.id
   ip        = "10.0.1.4"
   alias_ips = []
+}
+
+resource "hcloud_volume" "cx3304_postgres" {
+  name              = "postgres"
+  size              = 200
+  format            = "ext4"
+  delete_protection = true
+  location          = "nbg1"
+
+  labels = {
+    "nomad_role" : "host_volume"
+  }
+}
+
+resource "hcloud_volume_attachment" "cx3304_postgres" {
+  volume_id = hcloud_volume.cx3304_postgres.id
+  server_id = hcloud_server.cx3304.id
+  automount = true
 }
 
 locals {
