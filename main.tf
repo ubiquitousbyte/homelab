@@ -187,6 +187,7 @@ locals {
   ports = [
     "22",   # SSH
     "4646", # Nomad
+    "4200", # Prefect
   ]
 }
 

@@ -2,9 +2,21 @@
 
 client {
   enabled = true
-  servers = [{% for host in groups['nomad_server'] %}"{{ hostvars[host]['nomad_advertise_addr'] }}:4647"{% if not loop.last %}, {% endif %}{% endfor %}]
+  servers = [{% for host in groups['nomad_server'] %}"{{ hostvars[host]['hcloud_private_ipv4'] }}:4647"{% if not loop.last %}, {% endif %}{% endfor %}]
   node_class = "{{ hcloud_server_type }}"
+{% raw %}
+  network_interface = "{{ GetPrivateInterfaces | include \"network\" \"10.0.0.0/8\" | attr \"name\" }}"
+{% endraw %}
 
+  host_network "public" {
+    cidr = "{{ hcloud_ipv4 }}/32"
+  }
+
+  host_network "tailscale" {
+{% raw %}
+    interface = "tailscale0"
+{% endraw %}
+  }
 {% if nomad_host_volumes | length > 0 %}
 {% for volume in nomad_host_volumes %}
   host_volume "{{ volume.name }}" {
