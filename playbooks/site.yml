@@ -13,19 +13,3 @@
         tailscale_state: started
         tailscale_tags:
           - "homelab"
-
-- name: Install and configure Nomad on all Nomad nodes
-  hosts: nomad
-  roles:
-    - nomad
-
-- name: Configure Nomad server nodes
-  hosts: nomad_server
-  roles:
-    - nomad_server
-
-- name: Configure Nomad client nodes
-  hosts: nomad_client
-  roles:
-    - nomad_client
-    - nomad_1password

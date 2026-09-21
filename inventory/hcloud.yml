@@ -3,13 +3,3 @@ plugin: hetzner.hcloud.hcloud
 locations:
   - nbg1
 network: main
-
-groups:
-  nomad: "'server' in hcloud_labels.get('nomad_role', '') or 'client' in hcloud_labels.get('nomad_role', '')"
-  nomad_server: "'server' in hcloud_labels.get('nomad_role', '')"
-  nomad_client: "'client' in hcloud_labels.get('nomad_role', '')"
-
-compose:
-  nomad_datacenter: hcloud_location
-  nomad_region: hcloud_location
-  nomad_hcloud_server_type: hcloud_server_type

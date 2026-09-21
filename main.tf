@@ -70,9 +70,7 @@ resource "hcloud_server" "cx3301" {
     hcloud_ssh_key.main.id
   ]
 
-  labels = {
-    "nomad_role" : "server"
-  }
+  labels = {}
 }
 
 resource "hcloud_server_network" "cx3301_cloud01" {
@@ -91,9 +89,7 @@ resource "hcloud_server" "cx3302" {
     hcloud_ssh_key.main.id
   ]
 
-  labels = {
-    "nomad_role" : "client"
-  }
+  labels = {}
 }
 
 resource "hcloud_server_network" "cx3302_cloud01" {
@@ -113,7 +109,6 @@ resource "hcloud_server" "cx3303" {
   ]
 
   labels = {
-    "nomad_role" : "client"
     "redis_role" : "master"
   }
 }
@@ -132,9 +127,7 @@ resource "hcloud_volume" "cx3303_redis" {
   delete_protection = true
   location          = "nbg1"
 
-  labels = {
-    "nomad_role" : "host_volume"
-  }
+  labels = {}
 }
 
 resource "hcloud_volume_attachment" "cx3303_redis" {
@@ -153,7 +146,6 @@ resource "hcloud_server" "cx3304" {
   ]
 
   labels = {
-    "nomad_role" : "client"
     "postgres_role" : "primary"
   }
 }
@@ -172,9 +164,7 @@ resource "hcloud_volume" "cx3304_postgres" {
   delete_protection = true
   location          = "nbg1"
 
-  labels = {
-    "nomad_role" : "host_volume"
-  }
+  labels = {}
 }
 
 resource "hcloud_volume_attachment" "cx3304_postgres" {
@@ -186,7 +176,6 @@ resource "hcloud_volume_attachment" "cx3304_postgres" {
 locals {
   ports = [
     "22",   # SSH
-    "4646", # Nomad
     "4200", # Prefect
   ]
 }

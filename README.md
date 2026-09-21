@@ -1,6 +1,6 @@
 # homelab
 
-Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](https://www.hetzner.com/cloud/) with [OpenTofu](https://opentofu.org/) and configures a [HashiCorp Nomad](https://www.nomadproject.io/) cluster using [Ansible](https://docs.ansible.com/).
+Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](https://www.hetzner.com/cloud/) with [OpenTofu](https://opentofu.org/) and configures them using [Ansible](https://docs.ansible.com/).
 
 ## Architecture
 
@@ -15,8 +15,6 @@ Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](htt
   |  |                                                               |  |
   |  |   +------------+  +------------+  +------------+  +--------+  |  |
   |  |   |   cx3301   |  |   cx3302   |  |   cx3303   |  | cx3304 |  |  |
-  |  |   |   Nomad    |  |   Nomad    |  |   Nomad    |  | Nomad  |  |  |
-  |  |   |   Server   |  |   Client   |  |   Client   |  | Client |  |  |
   |  |   | 10.0.1.1   |  | 10.0.1.2   |  | 10.0.1.3   |  |10.0.1.4|  |  |
   |  |   +-----+------+  +-----+------+  +-----+------+  +---+----+  |  |
   |  |         |               |               |              |       |  |
@@ -26,7 +24,7 @@ Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](htt
                              |
               +--------------+---------------+
               | Firewall: "firewall01"       |
-              | SSH + Nomad from home IP     |
+              | SSH from home IP             |
               | All traffic within subnet    |
               +--------------+---------------+
                              |
@@ -35,7 +33,7 @@ Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](htt
                      +----------------+
 ```
 
-Four `cx33` servers running Ubuntu 24.04 in Nuremberg. One Nomad server node, three Nomad client nodes with Docker as the task driver. A firewall restricts external access to SSH (22) and Nomad (4646) from your home IP, while allowing all internal traffic within the subnet.
+Four `cx33` servers running Ubuntu 24.04 in Nuremberg. A firewall restricts external access to SSH (22) from your home IP, while allowing all internal traffic within the subnet.
 
 ## Prerequisites
 
