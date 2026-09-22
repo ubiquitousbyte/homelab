@@ -1,0 +1,25 @@
+[Unit]
+Description=etcd key-value store
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=etcd
+Group=etcd
+ExecStart=/usr/local/bin/etcd \
+  --name {{ inventory_hostname }} \
+  --data-dir {{ etcd_data_dir }} \
+  --listen-peer-urls http://{{ hcloud_private_ipv4 }}:2380 \
+  --listen-client-urls http://{{ hcloud_private_ipv4 }}:2379,http://127.0.0.1:2379 \
+  --initial-advertise-peer-urls http://{{ hcloud_private_ipv4 }}:2380 \
+  --advertise-client-urls http://{{ hcloud_private_ipv4 }}:2379 \
+  --initial-cluster {% for h in groups['etcd'] %}{{ h }}=http://{{ hostvars[h].hcloud_private_ipv4 }}:2380{% if not loop.last %},{% endif %}{% endfor %} \
+  --initial-cluster-state new \
+  --initial-cluster-token homelab-etcd
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

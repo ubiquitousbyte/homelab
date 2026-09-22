@@ -1,4 +1,6 @@
 ---
+- name: Bring up the private network interface
+  ansible.builtin.import_tasks: private_network.yml
 - name: Harden SSH access
   ansible.builtin.import_tasks: sshd.yml
 - name: Set up automatic security updates

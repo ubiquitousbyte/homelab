@@ -4,6 +4,8 @@ locations:
   - nbg1
 network: main
 strict: true
+groups:
+  etcd: hcloud_labels.etcd is defined and hcloud_labels.etcd == "member"
 compose:
   # Servers join Tailscale at boot (see cx33.tf); connect over the tailnet via
   # MagicDNS (the server name doubles as its Tailscale hostname) instead of the

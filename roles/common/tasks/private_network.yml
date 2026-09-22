@@ -1,0 +1,25 @@
+---
+# Hetzner's cloud-init datasource doesn't include the private-network NIC in
+# the netplan config it generates at first boot, so it's left present but
+# unconfigured (state DOWN, no address). Bring it up via DHCP -- Hetzner's
+# private network hands out exactly the IP reserved for this server via
+# hcloud_server_network, so no static addressing needs to be duplicated here.
+- name: Determine the private network interface
+  ansible.builtin.set_fact:
+    common_private_interface: >-
+      {{ ansible_interfaces
+         | reject('in', ['lo', 'eth0', 'tailscale0', 'docker0'])
+         | reject('match', '^(veth|br-|virbr).*')
+         | list | first }}
+
+- name: Configure the private network interface via DHCP
+  ansible.builtin.copy:
+    dest: /etc/netplan/60-private-network.yaml
+    mode: "0600"
+    content: |
+      network:
+        version: 2
+        ethernets:
+          {{ common_private_interface }}:
+            dhcp4: true
+  notify: Apply netplan

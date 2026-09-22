@@ -3,3 +3,8 @@
   hosts: all
   roles:
     - common
+
+- name: Set up etcd cluster
+  hosts: etcd
+  roles:
+    - etcd
