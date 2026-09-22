@@ -3,13 +3,3 @@
   hosts: all
   roles:
     - common
-
-- name: Install and configure Tailscale on all hosts
-  hosts: all
-  roles:
-    - role: artis3n.tailscale.machine
-      vars:
-        tailscale_authkey: "{{ lookup('env', 'TAILSCALE_KEY') }}"
-        tailscale_state: started
-        tailscale_tags:
-          - "homelab"

@@ -4,13 +4,8 @@ variable "hcloud_token" {
   description = "Personal access token for interacting with HCloud."
 }
 
-variable "hcloud_public_key" {
-  type        = string
-  description = "Public key to be installed on all HCloud machines."
-}
-
-variable "home_ip" {
+variable "tailscale_authkey" {
   sensitive   = true
   type        = string
-  description = "IP address @ home."
+  description = "Tailscale auth key used to join machines to the tailnet at boot, via cloud-init."
 }

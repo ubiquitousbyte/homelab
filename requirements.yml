@@ -3,4 +3,3 @@ collections:
   - name: community.general
   - name: community.docker
   - name: hetzner.hcloud
-  - name: artis3n.tailscale

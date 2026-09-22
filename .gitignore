@@ -149,13 +149,15 @@ activemq-data/
 
 # Environments
 .env
-.envrc
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# mise: mise.toml is tracked, mise.local.toml holds this machine's secrets
+mise.local.toml
 
 # Spyder project settings
 .spyderproject
@@ -232,6 +234,9 @@ crash.*.log
 # to change depending on the environment.
 *.tfvars
 *.tfvars.json
+
+# No secrets in here, just machine-name -> IP maps, so track these.
+!cx33.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in

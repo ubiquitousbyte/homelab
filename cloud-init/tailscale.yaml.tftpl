@@ -1,0 +1,7 @@
+#cloud-config
+runcmd:
+  - for i in $(seq 1 10); do curl -fsSL --max-time 15 https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg -o /usr/share/keyrings/tailscale-archive-keyring.gpg && break || sleep 5; done
+  - for i in $(seq 1 10); do curl -fsSL --max-time 15 https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list -o /etc/apt/sources.list.d/tailscale.list && break || sleep 5; done
+  - for i in $(seq 1 10); do apt-get update && break || sleep 5; done
+  - apt-get install -y tailscale
+  - tailscale up --authkey=${authkey} --ssh --advertise-tags=tag:homelab

@@ -24,25 +24,25 @@ Infrastructure-as-code for my homelab. Provisions servers on [Hetzner Cloud](htt
                              |
               +--------------+---------------+
               | Firewall: "firewall01"       |
-              | SSH from home IP             |
+              | No public SSH                |
               | All traffic within subnet    |
               +--------------+---------------+
                              |
                      +-------+--------+
-                     |    Home IP     |
+                     |   Tailscale    |
                      +----------------+
 ```
 
-Four `cx33` servers running Ubuntu 24.04 in Nuremberg. A firewall restricts external access to SSH (22) from your home IP, while allowing all internal traffic within the subnet.
+Four `cx33` servers running Ubuntu 24.04 in Nuremberg. Nodes join Tailscale at boot via cloud-init and are administered over Tailscale SSH from then on; the firewall has no public SSH access, only internal subnet traffic.
 
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) -- Python package manager
 - [OpenTofu](https://opentofu.org/docs/intro/install/) ~> 1.11
-- [direnv](https://direnv.net/) -- automatic environment variable loading
-- An SSH keypair at `~/.ssh/id_ed25519`
+- [mise](https://mise.jdx.dev/) -- tool version management and environment variable loading
+- A [GitHub](https://github.com/) account with a public SSH key added, and a personal access token for GHCR (GitHub Container Registry)
 - A [Hetzner Cloud](https://www.hetzner.com/cloud/) account with an API token
-- A [GitHub](https://github.com/) account with a personal access token for GHCR (GitHub Container Registry)
+- A [Tailscale](https://tailscale.com/) account with an auth key
 
 ## Getting Started
 
@@ -55,30 +55,30 @@ cd homelab
 
 ### 2. Set up environment variables
 
-Copy the example files and fill in your values:
+Copy the example file and fill in your values:
 
 ```sh
-cp .envrc.example .envrc
-cp .env.example .env
+cp mise.local.toml.example mise.local.toml
 ```
 
-Edit `.envrc` and replace the placeholder values with your actual credentials. Edit `.env` and set your home IP address.
-
-Then allow direnv to load the environment:
+Edit `mise.local.toml` and replace the placeholder values with your actual credentials, then let mise pick it up:
 
 ```sh
-direnv allow
+mise trust
 ```
+
+`mise.local.toml` is gitignored -- it's the one place your secrets live, separate from the tracked `mise.toml` (tool versions and non-secret env config).
 
 #### Secrets management
 
-I use the [1Password CLI](https://developer.1password.com/docs/cli/) (`op`) to inject secrets into `.envrc` rather than hardcoding them. For example:
+I use the [1Password CLI](https://developer.1password.com/docs/cli/) (`op`) to inject secrets into `mise.local.toml` rather than hardcoding them, via mise's `exec()` template function. For example:
 
-```sh
-export HCLOUD_TOKEN=$(op read "op://Vault/Item/credential")
+```toml
+[env]
+HCLOUD_TOKEN = "{{exec(command=\"op read op://Vault/Item/credential\")}}"
 ```
 
-This is optional -- you can set the values directly in `.envrc` if you prefer a different approach.
+This is optional -- you can set the values directly in `mise.local.toml` if you prefer a different approach.
 
 ### 3. Install dependencies
 

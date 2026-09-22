@@ -3,3 +3,9 @@ plugin: hetzner.hcloud.hcloud
 locations:
   - nbg1
 network: main
+strict: true
+compose:
+  # Servers join Tailscale at boot (see cx33.tf); connect over the tailnet via
+  # MagicDNS (the server name doubles as its Tailscale hostname) instead of the
+  # public IP, which no longer has SSH open to it.
+  ansible_host: hcloud_name

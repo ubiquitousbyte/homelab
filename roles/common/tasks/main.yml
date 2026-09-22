@@ -1,4 +1,8 @@
 ---
+- name: Harden SSH access
+  ansible.builtin.import_tasks: sshd.yml
+- name: Set up automatic security updates
+  ansible.builtin.import_tasks: unattended-upgrades.yml
 - name: Set up Ghostty terminal support
   ansible.builtin.import_tasks: ghostty.yml
 - name: Set up Python and pip
