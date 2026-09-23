@@ -26,7 +26,7 @@
     remote_src: true
     creates: "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd"
 
-- name: Install etcd and etcdctl binaries
+- name: Install etcd, etcdctl and etcdutl binaries
   ansible.builtin.copy:
     src: "/tmp/etcd-v{{ etcd_version }}-linux-amd64/{{ item }}"
     dest: "/usr/local/bin/{{ item }}"
@@ -35,10 +35,19 @@
   loop:
     - etcd
     - etcdctl
+    - etcdutl
 
 - name: Create etcd data directory
   ansible.builtin.file:
     path: "{{ etcd_data_dir }}"
+    state: directory
+    owner: etcd
+    group: etcd
+    mode: "0700"
+
+- name: Create etcd backup directory
+  ansible.builtin.file:
+    path: "{{ etcd_backup_dir }}"
     state: directory
     owner: etcd
     group: etcd
@@ -51,9 +60,30 @@
     mode: "0644"
   notify: Restart etcd
 
+- name: Install etcd snapshot and defrag systemd units
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: "0644"
+  loop:
+    - etcd-snapshot.service
+    - etcd-snapshot.timer
+    - etcd-defrag.service
+    - etcd-defrag.timer
+
 - name: Start and enable etcd
   ansible.builtin.systemd_service:
     name: etcd
     state: started
     enabled: true
     daemon_reload: true
+
+- name: Start and enable etcd snapshot and defrag timers
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - etcd-snapshot.timer
+    - etcd-defrag.timer

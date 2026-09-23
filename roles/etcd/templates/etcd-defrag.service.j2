@@ -1,0 +1,10 @@
+[Unit]
+Description=Defragment the local etcd member
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+Type=oneshot
+User=etcd
+Group=etcd
+ExecStart=/usr/local/bin/etcdctl --endpoints=127.0.0.1:2379 defrag

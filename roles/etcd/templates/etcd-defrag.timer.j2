@@ -1,0 +1,11 @@
+[Unit]
+Description=Weekly staggered etcd defrag
+
+[Timer]
+# Members defrag one at a time, staggered by an hour each, since defrag
+# blocks the member while it runs and must never overlap across the cluster.
+OnCalendar=Sun *-*-* {{ 3 + (groups['etcd'] | sort).index(inventory_hostname) }}:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

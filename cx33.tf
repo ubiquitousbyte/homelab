@@ -1,9 +1,10 @@
 variable "cx33" {
   type = map(object({
-    ip     = string
-    labels = optional(map(string), {})
+    ip      = string
+    labels  = optional(map(string), {})
+    backups = optional(bool, false)
   }))
-  description = "Map of cx33 machine name to its private IP on the cloud01 subnet (and optional labels)."
+  description = "Map of cx33 machine name to its private IP on the cloud01 subnet (and optional labels/backups)."
 }
 
 resource "hcloud_server" "cx33" {
@@ -19,7 +20,8 @@ resource "hcloud_server" "cx33" {
     authkey = var.tailscale_authkey
   })
 
-  labels = each.value.labels
+  labels  = each.value.labels
+  backups = each.value.backups
 }
 
 resource "hcloud_server_network" "cx33" {

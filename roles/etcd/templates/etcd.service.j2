@@ -15,8 +15,10 @@ ExecStart=/usr/local/bin/etcd \
   --initial-advertise-peer-urls http://{{ hcloud_private_ipv4 }}:2380 \
   --advertise-client-urls http://{{ hcloud_private_ipv4 }}:2379 \
   --initial-cluster {% for h in groups['etcd'] %}{{ h }}=http://{{ hostvars[h].hcloud_private_ipv4 }}:2380{% if not loop.last %},{% endif %}{% endfor %} \
-  --initial-cluster-state new \
-  --initial-cluster-token homelab-etcd
+  --initial-cluster-state {{ etcd_initial_cluster_state }} \
+  --initial-cluster-token homelab-etcd \
+  --auto-compaction-mode=periodic \
+  --auto-compaction-retention={{ etcd_compaction_retention }}
 Restart=on-failure
 RestartSec=5s
 LimitNOFILE=65536

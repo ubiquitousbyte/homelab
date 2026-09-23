@@ -1,0 +1,11 @@
+[Unit]
+Description=Snapshot the local etcd member's data
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+Type=oneshot
+User=etcd
+Group=etcd
+ExecStart=/bin/sh -c '/usr/local/bin/etcdctl --endpoints=127.0.0.1:2379 snapshot save {{ etcd_backup_dir }}/etcd-$(date +%%Y%%m%%d-%%H%%M%%S).db'
+ExecStart=/bin/sh -c 'ls -1t {{ etcd_backup_dir }}/*.db | tail -n +$(( {{ etcd_backup_retain }} + 1 )) | xargs -r rm -f'

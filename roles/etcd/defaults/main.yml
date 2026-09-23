@@ -2,3 +2,7 @@
 etcd_version: "3.7.1"
 etcd_checksum: "sha256:e8cd3fa8064c98137c5dbd78b76f969417ace84efb83c481041d7a52ffdd8fb9"
 etcd_data_dir: /var/lib/etcd
+etcd_initial_cluster_state: new
+etcd_compaction_retention: "1h"
+etcd_backup_dir: /var/lib/etcd-backups
+etcd_backup_retain: 7

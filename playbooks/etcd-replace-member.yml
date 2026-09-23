@@ -1,0 +1,82 @@
+---
+# Replaces one etcd member that has been permanently lost (dead disk,
+# destroyed server) and rebuilt under the same name/IP. See
+# docs/etcd/operations.md, Case 2.
+#
+# Usage:
+#   uv run ansible-playbook playbooks/etcd-replace-member.yml \
+#     --limit cx3301 -e confirm=cx3301
+- name: Replace a lost etcd member
+  hosts: etcd
+  serial: 1
+  vars:
+    healthy_peer: "{{ (groups['etcd'] | difference([inventory_hostname])) | first }}"
+  tasks:
+    - name: Require an explicit confirmation matching the target host
+      ansible.builtin.assert:
+        that: (confirm | default('')) == inventory_hostname
+        fail_msg: >-
+          Refusing to proceed: pass -e confirm={{ inventory_hostname }} to
+          confirm you intend to remove and replace this exact member.
+
+    - name: Confirm the target is not already a healthy member
+      ansible.builtin.command:
+        cmd: "etcdctl endpoint health --endpoints=http://{{ hcloud_private_ipv4 }}:2379"
+      delegate_to: "{{ healthy_peer }}"
+      register: etcd_replace_health_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Refuse to proceed if the target is still healthy
+      ansible.builtin.assert:
+        that: etcd_replace_health_check is failed
+        fail_msg: >-
+          {{ inventory_hostname }} is still a healthy member. This playbook
+          is only for a member that is actually gone.
+
+    - name: Look up the target's current membership, if any
+      ansible.builtin.command:
+        cmd: etcdctl member list --write-out=json
+      delegate_to: "{{ healthy_peer }}"
+      register: etcd_replace_member_list
+      changed_when: false
+
+    - name: Remove the old member entry
+      # etcdctl member remove wants the hex ID (as shown in `member list`'s
+      # table view), but --write-out=json reports the same ID as decimal.
+      # ansible-lint can't statically resolve the loop var here and flags a
+      # false positive; verified correct against live output (e.g. decimal
+      # 4997399397005701798 -> hex 455a54463346b2a6, matching `member list`).
+      ansible.builtin.command:  # noqa: jinja[invalid]
+        cmd: "etcdctl member remove {{ '%x' % (item.ID | int) }}"
+      delegate_to: "{{ healthy_peer }}"
+      loop: "{{ (etcd_replace_member_list.stdout | from_json).members }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: item.name == inventory_hostname
+      changed_when: true
+
+    - name: Add the new member
+      ansible.builtin.command:
+        cmd: >-
+          etcdctl member add {{ inventory_hostname }}
+          --peer-urls=http://{{ hcloud_private_ipv4 }}:2380
+      delegate_to: "{{ healthy_peer }}"
+      changed_when: true
+
+    - name: Install and start etcd on the replacement, joining the existing cluster
+      ansible.builtin.include_role:
+        name: etcd
+      vars:
+        etcd_initial_cluster_state: existing
+
+    - name: Verify the replacement joined
+      ansible.builtin.command:
+        cmd: etcdctl member list --write-out=table
+      delegate_to: "{{ healthy_peer }}"
+      changed_when: false
+      register: etcd_replace_final_list
+
+    - name: Show final membership
+      ansible.builtin.debug:
+        msg: "{{ etcd_replace_final_list.stdout_lines }}"
