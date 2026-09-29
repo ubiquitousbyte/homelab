@@ -160,6 +160,22 @@ replication catches it up from the other two automatically, no manual
 snapshot restore needed. If it *had* been removed, run the replacement
 playbook from Case 2 instead.
 
+**A note on backup consistency:** Hetzner's Backups are taken live, without
+powering the server off, so Hetzner doesn't guarantee consistency. In
+practice this just means the backup captures the disk as if the machine had
+lost power at that instant -- ext4's journal and etcd's own WAL are both
+designed to recover cleanly from exactly that. So:
+
+```sh
+systemctl start etcd
+systemctl is-active etcd
+```
+
+should just work. If it doesn't -- etcd refuses to start, or logs point at
+corruption -- don't fight it. Restore that day's etcd-native snapshot
+instead (it's sitting right there in `/var/lib/etcd-backups/` on the same
+restored disk), following Case 3 from step 3 onward.
+
 ---
 
 ## Known limitations
